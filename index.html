@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Cake</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body{
+  background:#FFF5F0;
+  color:#5A3E36;
+}
+
+/* PANTALLA INICIAL */
+.inicio{
+  position:fixed;
+  inset:0;
+  background:linear-gradient(rgba(198,40,40,0.7), rgba(198,40,40,0.7)),
+  url("https://images.unsplash.com/photo-1559622214-3a0a6c8e5c2e");
+  background-size:cover;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  color:white;
+  text-align:center;
+  z-index:999;
+}
+
+.inicio h1{
+  font-size:38px;
+  margin-bottom:20px;
+}
+
+.btn-entrar{
+  background:white;
+  color:#C62828;
+  border:none;
+  padding:15px 30px;
+  border-radius:30px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.btn-entrar:hover{
+  transform:scale(1.05);
+}
+
+/* CONTENIDO */
+#contenido{
+  display:none;
+  padding:20px;
+}
+
+/* TARJETAS TORTAS */
+.torta{
+  background:white;
+  border-radius:15px;
+  padding:15px;
+  margin-bottom:20px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.08);
+  display:flex;
+  gap:15px;
+  align-items:center;
+}
+
+.torta img{
+  width:90px;
+  height:90px;
+  border-radius:12px;
+  object-fit:cover;
+}
+
+.torta-info{
+  flex:1;
+}
+
+.torta-info h3{
+  margin-bottom:5px;
+}
+
+.torta-info button{
+  background:#C62828;
+  color:white;
+  border:none;
+  padding:8px 15px;
+  border-radius:20px;
+  cursor:pointer;
+  margin-top:8px;
+}
+
+/* PERSONALIZACION */
+.personalizacion{
+  display:none;
+  margin-top:20px;
+  background:#F8D7DA;
+  padding:20px;
+  border-radius:15px;
+}
+
+.personalizacion select,
+.personalizacion input{
+  width:100%;
+  padding:10px;
+  margin-bottom:10px;
+  border-radius:8px;
+  border:1px solid #ddd;
+}
+
+.btn-pedir{
+  background:#C62828;
+  color:white;
+  border:none;
+  padding:12px;
+  width:100%;
+  border-radius:25px;
+  cursor:pointer;
+  font-weight:bold;
+}
+</style>
+</head>
+<body>
+
+<div class="inicio" id="inicio">
+  <h1>Happy Cake</h1>
+  <button class="btn-entrar" onclick="entrar()">Ver Catálogo</button>
+</div>
+
+<div id="contenido">
+
+<h2 style="margin-bottom:20px;">Nuestras Tortas</h2>
+
+<div class="torta">
+  <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587">
+  <div class="torta-info">
+    <h3>Torta de Chocolate</h3>
+    <p>Desde S/ 60</p>
+    <button onclick="mostrarPersonalizacion('Chocolate')">Personalizar</button>
+  </div>
+</div>
+
+<div class="torta">
+  <img src="https://images.unsplash.com/photo-1542826438-bd32f43d626f">
+  <div class="torta-info">
+    <h3>Torta Tres Leches</h3>
+    <p>Desde S/ 55</p>
+    <button onclick="mostrarPersonalizacion('Tres Leches')">Personalizar</button>
+  </div>
+</div>
+
+<div class="personalizacion" id="personalizacion">
+  <h3 id="tituloTorta"></h3>
+
+  <select id="tamano">
+    <option value="">Seleccionar tamaño</option>
+    <option>6 personas</option>
+    <option>10 personas</option>
+    <option>20 personas</option>
+  </select>
+
+  <select id="relleno">
+    <option value="">Seleccionar relleno</option>
+    <option>Fresa</option>
+    <option>Manjar</option>
+    <option>Chocolate</option>
+    <option>Oreo</option>
+  </select>
+
+  <select id="cobertura">
+    <option value="">Seleccionar cobertura</option>
+    <option>Chantilly</option>
+    <option>Fondant</option>
+    <option>Ganache</option>
+  </select>
+
+  <input type="text" id="mensaje" placeholder="Mensaje personalizado (opcional)">
+
+  <input type="date" id="fecha">
+
+  <button class="btn-pedir" onclick="enviarPedido()">Enviar Pedido 🍰</button>
+</div>
+
+</div>
+
+<script>
+let tortaSeleccionada = "";
+const phone="51958049586";
+
+function entrar(){
+  document.getElementById("inicio").style.display="none";
+  document.getElementById("contenido").style.display="block";
+}
+
+function mostrarPersonalizacion(nombre){
+  tortaSeleccionada = nombre;
+  document.getElementById("personalizacion").style.display="block";
+  document.getElementById("tituloTorta").innerText = "Personalizando: " + nombre;
+}
+
+function enviarPedido(){
+  const tamano = document.getElementById("tamano").value;
+  const relleno = document.getElementById("relleno").value;
+  const cobertura = document.getElementById("cobertura").value;
+  const mensaje = document.getElementById("mensaje").value;
+  const fecha = document.getElementById("fecha").value;
+
+  if(!tamano || !relleno || !cobertura || !fecha){
+    alert("Completa todos los campos obligatorios");
+    return;
+  }
+
+  let texto="*PEDIDO TORTA*\n\n";
+  texto+="*Torta:* "+tortaSeleccionada+"\n";
+  texto+="*Tamaño:* "+tamano+"\n";
+  texto+="*Relleno:* "+relleno+"\n";
+  texto+="*Cobertura:* "+cobertura+"\n";
+  texto+="*Mensaje:* "+mensaje+"\n";
+  texto+="*Fecha entrega:* "+fecha+"\n";
+  texto+="\n¡Muchas gracias 🍰💖!";
+
+  window.location.href="https://wa.me/"+phone+"?text="+encodeURIComponent(texto);
+}
+</script>
+
+</body>
+</html>
