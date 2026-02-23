@@ -110,13 +110,8 @@ h2{
   display:flex;
   align-items:center;
   justify-content:center;
-  line-height:1;
   transition:0.3s;
   box-shadow:0 4px 10px rgba(0,0,0,0.15);
-}
-
-.btn-toggle:hover{
-  transform:scale(1.1);
 }
 
 .opciones{
@@ -126,12 +121,6 @@ h2{
   padding:15px;
   border-radius:15px;
   box-shadow:0 5px 15px rgba(0,0,0,0.08);
-  animation:fade 0.3s ease;
-}
-
-@keyframes fade{
-  from{opacity:0; transform:translateY(-5px);}
-  to{opacity:1; transform:translateY(0);}
 }
 
 .grupo{
@@ -165,6 +154,27 @@ h2{
   margin-top:8px;
 }
 
+/* BOTÓN HACER PEDIDO */
+.btn-hacer{
+  margin-top:12px;
+  width:100%;
+  padding:10px;
+  border-radius:20px;
+  border:2px solid #C40000;
+  background:white;
+  color:#C40000;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+/* FORMULARIO FINAL */
+.formulario{
+  display:none;
+  margin-top:12px;
+  padding-top:12px;
+  border-top:1px solid #eee;
+}
+
 input{
   width:100%;
   padding:10px;
@@ -174,12 +184,18 @@ input{
   font-size:16px;
 }
 
-/* FECHA */
-input[type="date"]{
-  border:1px solid #C40000;
+.fecha-hora{
+  display:flex;
+  gap:10px;
 }
 
-.btn-pedir{
+.fecha-hora input{
+  flex:1;
+  border:2px solid #C40000;
+  text-align:center;
+}
+
+.btn-confirmar{
   margin-top:12px;
   width:100%;
   padding:12px;
@@ -189,11 +205,6 @@ input[type="date"]{
   color:white;
   font-weight:bold;
   cursor:pointer;
-  transition:0.3s;
-}
-
-.btn-pedir:hover{
-  background:#a00000;
 }
 </style>
 </head>
@@ -220,8 +231,8 @@ const tortas = [
 
 const contenido = document.getElementById("contenido");
 
-tortas.forEach(t => {
-contenido.innerHTML += `
+tortas.forEach(t=>{
+contenido.innerHTML+=`
 <div class="torta">
 <div class="torta-header">
 <div class="torta-info">
@@ -239,10 +250,10 @@ contenido.innerHTML += `
 <div class="grupo">
 <p>Presentación</p>
 <button class="opcion-btn" onclick="seleccionar(event,this)">Torta Completa</button>
-<button class="opcion-btn" onclick="seleccionar(event,this);mostrarTajadas(this)">Por Tajadas</button>
+<button class="opcion-btn" onclick="seleccionar(event,this)">Por Tajadas</button>
 
 <div class="tajadas">
-<p>Cantidad de Tajadas</p>
+<p>Cantidad</p>
 <button class="opcion-btn" onclick="seleccionar(event,this)">1</button>
 <button class="opcion-btn" onclick="seleccionar(event,this)">2</button>
 <button class="opcion-btn" onclick="seleccionar(event,this)">4</button>
@@ -257,17 +268,21 @@ contenido.innerHTML += `
 <button class="opcion-btn" onclick="seleccionar(event,this)">Chocolate</button>
 </div>
 
-<div class="grupo">
-<p>Fecha de Entrega</p>
-<input type="date" min="${new Date().toISOString().split('T')[0]}">
-</div>
+<button class="btn-hacer" onclick="mostrarFormulario(this)">
+Hacer Pedido
+</button>
 
+<div class="formulario">
+<div class="fecha-hora">
+<input type="date">
+<input type="time">
+</div>
 <input type="text" placeholder="Nombre del cliente">
 <input type="text" placeholder="Mensaje o dedicatoria">
-
-<button class="btn-pedir" onclick="enviarPedido(event,'${t.nombre}')">
-Reservar Pedido 🎂
+<button class="btn-confirmar" onclick="enviarPedido(event,'${t.nombre}')">
+Confirmar Pedido 🎂
 </button>
+</div>
 
 </div>
 </div>
@@ -282,81 +297,47 @@ contenido.style.display="block";
 }
 
 function toggleTorta(btn){
-const opciones = btn.closest(".torta").querySelector(".opciones");
-
-if(opciones.style.display === "block"){
-opciones.style.display="none";
-btn.innerHTML="+";
-btn.style.background="#C40000";
-btn.style.color="#fff";
-}else{
-document.querySelectorAll(".opciones").forEach(o=>o.style.display="none");
-document.querySelectorAll(".btn-toggle").forEach(b=>{
-b.innerHTML="+";
-b.style.background="#C40000";
-b.style.color="#fff";
-});
-opciones.style.display="block";
-btn.innerHTML="−";
-btn.style.background="#fff";
-btn.style.color="#C40000";
-}
+const opciones=btn.closest(".torta").querySelector(".opciones");
+opciones.style.display=opciones.style.display==="block"?"none":"block";
 }
 
 function seleccionar(e,btn){
-  e.stopPropagation();
+e.stopPropagation();
+const grupo=btn.parentElement;
+grupo.querySelectorAll(".opcion-btn").forEach(b=>b.classList.remove("activo"));
+btn.classList.add("activo");
 
-  const grupo = btn.parentElement;
+if(btn.innerText==="Por Tajadas"){
+grupo.querySelector(".tajadas").style.display="block";
+}
+if(btn.innerText==="Torta Completa"){
+grupo.querySelector(".tajadas").style.display="none";
+}
+}
 
-  // Quitar activo del mismo grupo
-  grupo.querySelectorAll(".opcion-btn").forEach(b=>{
-    b.classList.remove("activo");
-  });
-
-  btn.classList.add("activo");
-
-  // CONTROL INTELIGENTE DE TAJADAS
-  const torta = btn.closest(".opciones");
-  const tajadasDiv = torta.querySelector(".tajadas");
-
-  if(btn.innerText === "Por Tajadas"){
-    tajadasDiv.style.display = "block";
-  }
-
-  if(btn.innerText === "Torta Completa"){
-    tajadasDiv.style.display = "none";
-
-    // Limpiar selección de números
-    tajadasDiv.querySelectorAll(".opcion-btn").forEach(b=>{
-      b.classList.remove("activo");
-    });
-  }
+function mostrarFormulario(btn){
+const form=btn.nextElementSibling;
+form.style.display=form.style.display==="block"?"none":"block";
 }
 
 function enviarPedido(e,nombre){
 e.stopPropagation();
-const torta = e.target.closest(".opciones");
-const activos = torta.querySelectorAll(".activo");
-const fecha = torta.querySelector('input[type="date"]').value;
-const inputs = torta.querySelectorAll('input[type="text"]');
+const form=e.target.closest(".formulario");
+const fecha=form.querySelector('input[type="date"]').value;
+const hora=form.querySelector('input[type="time"]').value;
+const textos=form.querySelectorAll('input[type="text"]');
 
-if(!fecha){
-alert("Selecciona fecha de entrega");
+if(!fecha||!hora){
+alert("Selecciona fecha y hora");
 return;
 }
 
 let texto="*RESERVA HAPPY CAKES* 🎂\n\n";
 texto+="*Torta:* "+nombre+"\n";
-texto+="*Fecha de Entrega:* "+fecha+"\n";
-
-activos.forEach(a=>{
-if(a.parentElement.querySelector("p"))
-texto+="*"+a.parentElement.querySelector("p").innerText+":* "+a.innerText+"\n";
-});
-
-texto+="*Cliente:* "+inputs[0].value+"\n";
-texto+="*Dedicatoria:* "+inputs[1].value+"\n";
-texto+="\nGracias por confiar en Happy Cakes 💖";
+texto+="*Fecha:* "+fecha+"\n";
+texto+="*Hora:* "+hora+"\n";
+texto+="*Cliente:* "+textos[0].value+"\n";
+texto+="*Dedicatoria:* "+textos[1].value+"\n";
 
 window.location.href="https://wa.me/"+phone+"?text="+encodeURIComponent(texto);
 }
