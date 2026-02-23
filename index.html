@@ -3,49 +3,54 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Happy Cake</title>
+
+<title>Happy Cakes</title>
+<link rel="icon" href="imagenes/logohappycake.png">
 
 <style>
 *{
   box-sizing:border-box;
   margin:0;
   padding:0;
-  font-family: 'Segoe UI', sans-serif;
+  font-family:'Segoe UI', sans-serif;
 }
 
 body{
-  background:#FFF5F0;
-  color:#5A3E36;
+  background:#FFF6F2;
+  color:#111;
 }
 
 /* PANTALLA INICIAL */
 .inicio{
   position:fixed;
   inset:0;
-  background:linear-gradient(rgba(198,40,40,0.7), rgba(198,40,40,0.7)),
-  url("https://images.unsplash.com/photo-1559622214-3a0a6c8e5c2e");
-  background-size:cover;
+  background:#C40000;
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
+  gap:25px;
   color:white;
   text-align:center;
   z-index:999;
 }
 
-.inicio h1{
-  font-size:38px;
-  margin-bottom:20px;
+.logo-inicio{
+  width:160px;
+  height:160px;
+  border-radius:50%;
+  object-fit:cover;
+  background:white;
+  padding:10px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.3);
 }
 
 .btn-entrar{
   background:white;
-  color:#C62828;
+  color:#C40000;
   border:none;
-  padding:15px 30px;
+  padding:14px 30px;
   border-radius:30px;
-  font-size:16px;
   font-weight:bold;
   cursor:pointer;
   transition:0.3s;
@@ -61,13 +66,25 @@ body{
   padding:20px;
 }
 
-/* TARJETAS TORTAS */
-.torta{
-  background:white;
-  border-radius:15px;
-  padding:15px;
+h2{
   margin-bottom:20px;
-  box-shadow:0 5px 15px rgba(0,0,0,0.08);
+}
+
+.torta{
+  background:#FFE9E9;
+  border-radius:20px;
+  padding:18px;
+  margin-bottom:20px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.05);
+}
+
+.torta-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.torta-info{
   display:flex;
   gap:15px;
   align-items:center;
@@ -76,158 +93,272 @@ body{
 .torta img{
   width:90px;
   height:90px;
-  border-radius:12px;
+  border-radius:15px;
   object-fit:cover;
 }
 
-.torta-info{
-  flex:1;
-}
-
-.torta-info h3{
-  margin-bottom:5px;
-}
-
-.torta-info button{
-  background:#C62828;
-  color:white;
+.btn-toggle{
+  width:45px;
+  height:45px;
+  border-radius:50%;
+  background:#C40000;
+  color:#fff;
   border:none;
-  padding:8px 15px;
-  border-radius:20px;
+  font-size:26px;
+  font-weight:bold;
   cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  line-height:1;
+  transition:0.3s;
+  box-shadow:0 4px 10px rgba(0,0,0,0.15);
+}
+
+.btn-toggle:hover{
+  transform:scale(1.1);
+}
+
+.opciones{
+  display:none;
+  margin-top:15px;
+  background:white;
+  padding:15px;
+  border-radius:15px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.08);
+  animation:fade 0.3s ease;
+}
+
+@keyframes fade{
+  from{opacity:0; transform:translateY(-5px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+.grupo{
+  margin-bottom:12px;
+}
+
+.grupo p{
+  font-weight:bold;
+  margin-bottom:6px;
+}
+
+.opcion-btn{
+  padding:8px 14px;
+  border-radius:20px;
+  border:1px solid #C40000;
+  background:white;
+  color:#C40000;
+  cursor:pointer;
+  margin:4px 4px 4px 0;
+  transition:0.3s;
+  font-size:14px;
+}
+
+.opcion-btn.activo{
+  background:#C40000;
+  color:white;
+}
+
+.tajadas{
+  display:none;
   margin-top:8px;
 }
 
-/* PERSONALIZACION */
-.personalizacion{
-  display:none;
-  margin-top:20px;
-  background:#F8D7DA;
-  padding:20px;
-  border-radius:15px;
-}
-
-.personalizacion select,
-.personalizacion input{
+input{
   width:100%;
   padding:10px;
-  margin-bottom:10px;
-  border-radius:8px;
+  border-radius:10px;
   border:1px solid #ddd;
+  margin-top:8px;
+  font-size:16px;
+}
+
+/* FECHA */
+input[type="date"]{
+  border:1px solid #C40000;
 }
 
 .btn-pedir{
-  background:#C62828;
-  color:white;
-  border:none;
-  padding:12px;
+  margin-top:12px;
   width:100%;
+  padding:12px;
+  border:none;
   border-radius:25px;
-  cursor:pointer;
+  background:#C40000;
+  color:white;
   font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.btn-pedir:hover{
+  background:#a00000;
 }
 </style>
 </head>
 <body>
 
 <div class="inicio" id="inicio">
-  <h1>Happy Cake</h1>
+  <img src="imagenes/logohappycake.png" class="logo-inicio">
+  <h1>Happy Cakes</h1>
   <button class="btn-entrar" onclick="entrar()">Ver Catálogo</button>
 </div>
 
 <div id="contenido">
-
-<h2 style="margin-bottom:20px;">Nuestras Tortas</h2>
-
-<div class="torta">
-  <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587">
-  <div class="torta-info">
-    <h3>Torta de Chocolate</h3>
-    <p>Desde S/ 60</p>
-    <button onclick="mostrarPersonalizacion('Chocolate')">Personalizar</button>
-  </div>
-</div>
-
-<div class="torta">
-  <img src="https://images.unsplash.com/photo-1542826438-bd32f43d626f">
-  <div class="torta-info">
-    <h3>Torta Tres Leches</h3>
-    <p>Desde S/ 55</p>
-    <button onclick="mostrarPersonalizacion('Tres Leches')">Personalizar</button>
-  </div>
-</div>
-
-<div class="personalizacion" id="personalizacion">
-  <h3 id="tituloTorta"></h3>
-
-  <select id="tamano">
-    <option value="">Seleccionar tamaño</option>
-    <option>6 personas</option>
-    <option>10 personas</option>
-    <option>20 personas</option>
-  </select>
-
-  <select id="relleno">
-    <option value="">Seleccionar relleno</option>
-    <option>Fresa</option>
-    <option>Manjar</option>
-    <option>Chocolate</option>
-    <option>Oreo</option>
-  </select>
-
-  <select id="cobertura">
-    <option value="">Seleccionar cobertura</option>
-    <option>Chantilly</option>
-    <option>Fondant</option>
-    <option>Ganache</option>
-  </select>
-
-  <input type="text" id="mensaje" placeholder="Mensaje personalizado (opcional)">
-
-  <input type="date" id="fecha">
-
-  <button class="btn-pedir" onclick="enviarPedido()">Enviar Pedido 🍰</button>
-</div>
-
+<h2>Nuestras Tortas</h2>
 </div>
 
 <script>
-let tortaSeleccionada = "";
-const phone="51958049586";
+const tortas = [
+  {nombre:"Torta Chocolate", img:"https://images.unsplash.com/photo-1578985545062-69928b1d9587", precio:"Desde S/ 60"},
+  {nombre:"Torta Tres Leches", img:"https://images.unsplash.com/photo-1542826438-bd32f43d626f", precio:"Desde S/ 55"},
+  {nombre:"Torta Red Velvet", img:"https://images.unsplash.com/photo-1606312619070-d48b4c652a52", precio:"Desde S/ 65"},
+  {nombre:"Torta Oreo", img:"https://images.unsplash.com/photo-1559622214-3a0a6c8e5c2e", precio:"Desde S/ 70"},
+  {nombre:"Torta Fresa", img:"https://images.unsplash.com/photo-1621303837174-89787a7d4729", precio:"Desde S/ 58"}
+];
+
+const contenido = document.getElementById("contenido");
+
+tortas.forEach(t => {
+contenido.innerHTML += `
+<div class="torta">
+<div class="torta-header">
+<div class="torta-info">
+<img src="${t.img}">
+<div>
+<h3>${t.nombre}</h3>
+<p>${t.precio}</p>
+</div>
+</div>
+<button class="btn-toggle" onclick="toggleTorta(this)">+</button>
+</div>
+
+<div class="opciones">
+
+<div class="grupo">
+<p>Presentación</p>
+<button class="opcion-btn" onclick="seleccionar(event,this)">Torta Completa</button>
+<button class="opcion-btn" onclick="seleccionar(event,this);mostrarTajadas(this)">Por Tajadas</button>
+
+<div class="tajadas">
+<p>Cantidad de Tajadas</p>
+<button class="opcion-btn" onclick="seleccionar(event,this)">1</button>
+<button class="opcion-btn" onclick="seleccionar(event,this)">2</button>
+<button class="opcion-btn" onclick="seleccionar(event,this)">4</button>
+<button class="opcion-btn" onclick="seleccionar(event,this)">6</button>
+</div>
+</div>
+
+<div class="grupo">
+<p>Relleno</p>
+<button class="opcion-btn" onclick="seleccionar(event,this)">Fresa</button>
+<button class="opcion-btn" onclick="seleccionar(event,this)">Manjar</button>
+<button class="opcion-btn" onclick="seleccionar(event,this)">Chocolate</button>
+</div>
+
+<div class="grupo">
+<p>Fecha de Entrega</p>
+<input type="date" min="${new Date().toISOString().split('T')[0]}">
+</div>
+
+<input type="text" placeholder="Nombre del cliente">
+<input type="text" placeholder="Mensaje o dedicatoria">
+
+<button class="btn-pedir" onclick="enviarPedido(event,'${t.nombre}')">
+Reservar Pedido 🎂
+</button>
+
+</div>
+</div>
+`;
+});
+
+const phone="51999999999";
 
 function entrar(){
-  document.getElementById("inicio").style.display="none";
-  document.getElementById("contenido").style.display="block";
+document.getElementById("inicio").style.display="none";
+contenido.style.display="block";
 }
 
-function mostrarPersonalizacion(nombre){
-  tortaSeleccionada = nombre;
-  document.getElementById("personalizacion").style.display="block";
-  document.getElementById("tituloTorta").innerText = "Personalizando: " + nombre;
+function toggleTorta(btn){
+const opciones = btn.closest(".torta").querySelector(".opciones");
+
+if(opciones.style.display === "block"){
+opciones.style.display="none";
+btn.innerHTML="+";
+btn.style.background="#C40000";
+btn.style.color="#fff";
+}else{
+document.querySelectorAll(".opciones").forEach(o=>o.style.display="none");
+document.querySelectorAll(".btn-toggle").forEach(b=>{
+b.innerHTML="+";
+b.style.background="#C40000";
+b.style.color="#fff";
+});
+opciones.style.display="block";
+btn.innerHTML="−";
+btn.style.background="#fff";
+btn.style.color="#C40000";
+}
 }
 
-function enviarPedido(){
-  const tamano = document.getElementById("tamano").value;
-  const relleno = document.getElementById("relleno").value;
-  const cobertura = document.getElementById("cobertura").value;
-  const mensaje = document.getElementById("mensaje").value;
-  const fecha = document.getElementById("fecha").value;
+function seleccionar(e,btn){
+  e.stopPropagation();
 
-  if(!tamano || !relleno || !cobertura || !fecha){
-    alert("Completa todos los campos obligatorios");
-    return;
+  const grupo = btn.parentElement;
+
+  // Quitar activo del mismo grupo
+  grupo.querySelectorAll(".opcion-btn").forEach(b=>{
+    b.classList.remove("activo");
+  });
+
+  btn.classList.add("activo");
+
+  // CONTROL INTELIGENTE DE TAJADAS
+  const torta = btn.closest(".opciones");
+  const tajadasDiv = torta.querySelector(".tajadas");
+
+  if(btn.innerText === "Por Tajadas"){
+    tajadasDiv.style.display = "block";
   }
 
-  let texto="*PEDIDO TORTA*\n\n";
-  texto+="*Torta:* "+tortaSeleccionada+"\n";
-  texto+="*Tamaño:* "+tamano+"\n";
-  texto+="*Relleno:* "+relleno+"\n";
-  texto+="*Cobertura:* "+cobertura+"\n";
-  texto+="*Mensaje:* "+mensaje+"\n";
-  texto+="*Fecha entrega:* "+fecha+"\n";
-  texto+="\n¡Muchas gracias 🍰💖!";
+  if(btn.innerText === "Torta Completa"){
+    tajadasDiv.style.display = "none";
 
-  window.location.href="https://wa.me/"+phone+"?text="+encodeURIComponent(texto);
+    // Limpiar selección de números
+    tajadasDiv.querySelectorAll(".opcion-btn").forEach(b=>{
+      b.classList.remove("activo");
+    });
+  }
+}
+
+function enviarPedido(e,nombre){
+e.stopPropagation();
+const torta = e.target.closest(".opciones");
+const activos = torta.querySelectorAll(".activo");
+const fecha = torta.querySelector('input[type="date"]').value;
+const inputs = torta.querySelectorAll('input[type="text"]');
+
+if(!fecha){
+alert("Selecciona fecha de entrega");
+return;
+}
+
+let texto="*RESERVA HAPPY CAKES* 🎂\n\n";
+texto+="*Torta:* "+nombre+"\n";
+texto+="*Fecha de Entrega:* "+fecha+"\n";
+
+activos.forEach(a=>{
+if(a.parentElement.querySelector("p"))
+texto+="*"+a.parentElement.querySelector("p").innerText+":* "+a.innerText+"\n";
+});
+
+texto+="*Cliente:* "+inputs[0].value+"\n";
+texto+="*Dedicatoria:* "+inputs[1].value+"\n";
+texto+="\nGracias por confiar en Happy Cakes 💖";
+
+window.location.href="https://wa.me/"+phone+"?text="+encodeURIComponent(texto);
 }
 </script>
 
