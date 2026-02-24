@@ -53,14 +53,8 @@ body{
   border-radius:30px;
   font-weight:bold;
   cursor:pointer;
-  transition:0.3s;
 }
 
-.btn-entrar:hover{
-  transform:scale(1.05);
-}
-
-/* CONTENIDO */
 #contenido{
   display:none;
   padding:20px;
@@ -104,14 +98,8 @@ h2{
   background:#C40000;
   color:#fff;
   border:none;
-  font-size:26px;
-  font-weight:bold;
+  font-size:24px;
   cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  transition:0.3s;
-  box-shadow:0 4px 10px rgba(0,0,0,0.15);
 }
 
 .opciones{
@@ -120,7 +108,6 @@ h2{
   background:white;
   padding:15px;
   border-radius:15px;
-  box-shadow:0 5px 15px rgba(0,0,0,0.08);
 }
 
 .grupo{
@@ -140,7 +127,6 @@ h2{
   color:#C40000;
   cursor:pointer;
   margin:4px 4px 4px 0;
-  transition:0.3s;
   font-size:14px;
 }
 
@@ -154,9 +140,8 @@ h2{
   margin-top:8px;
 }
 
-/* BOTÓN HACER PEDIDO */
-.btn-hacer{
-  margin-top:12px;
+.btn-agregar{
+  margin-top:10px;
   width:100%;
   padding:10px;
   border-radius:20px;
@@ -167,36 +152,52 @@ h2{
   cursor:pointer;
 }
 
-/* FORMULARIO FINAL */
-.formulario{
+/* PANEL FINAL PEDIDO */
+.panel-final{
   display:none;
-  margin-top:12px;
-  padding-top:12px;
-  border-top:1px solid #eee;
+  background:white;
+  padding:20px;
+  border-radius:20px;
+  margin-top:20px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.08);
 }
 
-input{
-  width:100%;
-  padding:10px;
-  border-radius:10px;
-  border:1px solid #ddd;
-  margin-top:8px;
-  font-size:16px;
+.panel-final h3{
+  text-align:center;
+  margin-bottom:15px;
+}
+
+.label-centro{
+  text-align:center;
+  font-weight:bold;
+  margin-top:10px;
 }
 
 .fecha-hora{
   display:flex;
-  gap:10px;
+  justify-content:center;
+  gap:15px;
+  margin-top:8px;
 }
 
 .fecha-hora input{
-  flex:1;
+  padding:10px;
+  border-radius:12px;
   border:2px solid #C40000;
   text-align:center;
+  width:140px;
 }
 
-.btn-confirmar{
-  margin-top:12px;
+input[type="text"]{
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  border:1px solid #ddd;
+  margin-top:10px;
+}
+
+.btn-enviar{
+  margin-top:15px;
   width:100%;
   padding:12px;
   border:none;
@@ -204,6 +205,18 @@ input{
   background:#C40000;
   color:white;
   font-weight:bold;
+  cursor:pointer;
+}
+
+.btn-finalizar{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:25px;
+  background:#C40000;
+  color:white;
+  font-weight:bold;
+  margin-top:20px;
   cursor:pointer;
 }
 </style>
@@ -218,42 +231,65 @@ input{
 
 <div id="contenido">
 <h2>Nuestras Tortas</h2>
+<div id="lista"></div>
+
+<button class="btn-finalizar" onclick="mostrarPanelFinal()">
+Finalizar Pedido 🛒
+</button>
+
+<div class="panel-final" id="panelFinal">
+<h3>Finalizar Pedido</h3>
+
+<div class="label-centro">Elija Fecha</div>
+<div class="label-centro">Elija Hora</div>
+
+<div class="fecha-hora">
+<input type="date" id="fecha">
+<input type="time" id="hora">
+</div>
+
+<input type="text" id="cliente" placeholder="Nombre del cliente">
+<input type="text" id="mensaje" placeholder="Mensaje o dedicatoria">
+
+<button class="btn-enviar" onclick="enviarPedido()">
+Enviar Pedido por WhatsApp 🎂
+</button>
+</div>
+
 </div>
 
 <script>
-const tortas = [
-  {nombre:"Torta Chocolate", img:"https://images.unsplash.com/photo-1578985545062-69928b1d9587", precio:"Desde S/ 60"},
-  {nombre:"Torta Tres Leches", img:"https://images.unsplash.com/photo-1542826438-bd32f43d626f", precio:"Desde S/ 55"},
-  {nombre:"Torta Red Velvet", img:"https://images.unsplash.com/photo-1606312619070-d48b4c652a52", precio:"Desde S/ 65"},
-  {nombre:"Torta Oreo", img:"https://images.unsplash.com/photo-1559622214-3a0a6c8e5c2e", precio:"Desde S/ 70"},
-  {nombre:"Torta Fresa", img:"https://images.unsplash.com/photo-1621303837174-89787a7d4729", precio:"Desde S/ 58"}
+const tortas=[
+{nombre:"Torta Chocolate",precio:"Desde S/60"},
+{nombre:"Torta Tres Leches",precio:"Desde S/55"},
+{nombre:"Torta Red Velvet",precio:"Desde S/65"},
+{nombre:"Torta Oreo",precio:"Desde S/70"},
+{nombre:"Torta Fresa",precio:"Desde S/58"}
 ];
 
-const contenido = document.getElementById("contenido");
+const lista=document.getElementById("lista");
+let carrito=[];
 
 tortas.forEach(t=>{
-contenido.innerHTML+=`
+lista.innerHTML+=`
 <div class="torta">
 <div class="torta-header">
 <div class="torta-info">
-<img src="${t.img}">
 <div>
 <h3>${t.nombre}</h3>
 <p>${t.precio}</p>
 </div>
 </div>
-<button class="btn-toggle" onclick="toggleTorta(this)">+</button>
+<button class="btn-toggle" onclick="toggle(this)">+</button>
 </div>
 
 <div class="opciones">
-
 <div class="grupo">
 <p>Presentación</p>
 <button class="opcion-btn" onclick="seleccionar(event,this)">Torta Completa</button>
 <button class="opcion-btn" onclick="seleccionar(event,this)">Por Tajadas</button>
 
 <div class="tajadas">
-<p>Cantidad</p>
 <button class="opcion-btn" onclick="seleccionar(event,this)">1</button>
 <button class="opcion-btn" onclick="seleccionar(event,this)">2</button>
 <button class="opcion-btn" onclick="seleccionar(event,this)">4</button>
@@ -268,37 +304,22 @@ contenido.innerHTML+=`
 <button class="opcion-btn" onclick="seleccionar(event,this)">Chocolate</button>
 </div>
 
-<button class="btn-hacer" onclick="mostrarFormulario(this)">
-Hacer Pedido
+<button class="btn-agregar" onclick="agregarAlCarrito('${t.nombre}',this)">
+Agregar al Pedido
 </button>
-
-<div class="formulario">
-<div class="fecha-hora">
-<input type="date">
-<input type="time">
-</div>
-<input type="text" placeholder="Nombre del cliente">
-<input type="text" placeholder="Mensaje o dedicatoria">
-<button class="btn-confirmar" onclick="enviarPedido(event,'${t.nombre}')">
-Confirmar Pedido 🎂
-</button>
-</div>
-
 </div>
 </div>
 `;
 });
 
-const phone="51999999999";
-
 function entrar(){
 document.getElementById("inicio").style.display="none";
-contenido.style.display="block";
+document.getElementById("contenido").style.display="block";
 }
 
-function toggleTorta(btn){
-const opciones=btn.closest(".torta").querySelector(".opciones");
-opciones.style.display=opciones.style.display==="block"?"none":"block";
+function toggle(btn){
+const op=btn.closest(".torta").querySelector(".opciones");
+op.style.display=op.style.display==="block"?"none":"block";
 }
 
 function seleccionar(e,btn){
@@ -315,31 +336,40 @@ grupo.querySelector(".tajadas").style.display="none";
 }
 }
 
-function mostrarFormulario(btn){
-const form=btn.nextElementSibling;
-form.style.display=form.style.display==="block"?"none":"block";
+function agregarAlCarrito(nombre,btn){
+carrito.push(nombre);
+alert(nombre+" agregada al pedido");
 }
 
-function enviarPedido(e,nombre){
-e.stopPropagation();
-const form=e.target.closest(".formulario");
-const fecha=form.querySelector('input[type="date"]').value;
-const hora=form.querySelector('input[type="time"]').value;
-const textos=form.querySelectorAll('input[type="text"]');
+function mostrarPanelFinal(){
+if(carrito.length===0){
+alert("Agrega al menos una torta");
+return;
+}
+document.getElementById("panelFinal").style.display="block";
+}
+
+function enviarPedido(){
+const fecha=document.getElementById("fecha").value;
+const hora=document.getElementById("hora").value;
+const cliente=document.getElementById("cliente").value;
+const mensaje=document.getElementById("mensaje").value;
 
 if(!fecha||!hora){
-alert("Selecciona fecha y hora");
+alert("Seleccione fecha y hora");
 return;
 }
 
-let texto="*RESERVA HAPPY CAKES* 🎂\n\n";
-texto+="*Torta:* "+nombre+"\n";
-texto+="*Fecha:* "+fecha+"\n";
-texto+="*Hora:* "+hora+"\n";
-texto+="*Cliente:* "+textos[0].value+"\n";
-texto+="*Dedicatoria:* "+textos[1].value+"\n";
+let texto="*PEDIDO HAPPY CAKES* 🎂\n\n";
+texto+="*Tortas:* \n";
+carrito.forEach(t=>texto+="- "+t+"\n");
 
-window.location.href="https://wa.me/"+phone+"?text="+encodeURIComponent(texto);
+texto+="\n*Fecha:* "+fecha;
+texto+="\n*Hora:* "+hora;
+texto+="\n*Cliente:* "+cliente;
+texto+="\n*Mensaje:* "+mensaje;
+
+window.location.href="https://wa.me/51999999999?text="+encodeURIComponent(texto);
 }
 </script>
 
