@@ -111,12 +111,17 @@ h2{
 }
 
 .grupo{
-  margin-bottom:12px;
+  margin-bottom:20px;
+  padding:15px;
+  background:#fff;
+  border-radius:15px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.05);
 }
 
 .grupo p{
   font-weight:bold;
-  margin-bottom:6px;
+  margin-bottom:10px;
+  color:#C40000;
 }
 
 .opcion-btn{
@@ -152,7 +157,7 @@ h2{
   cursor:pointer;
 }
 
-/* PANEL FINAL PEDIDO */
+/* PANEL FINAL */
 .panel-final{
   display:none;
   background:white;
@@ -167,28 +172,7 @@ h2{
   margin-bottom:15px;
 }
 
-.label-centro{
-  text-align:center;
-  font-weight:bold;
-  margin-top:10px;
-}
-
-.fecha-hora{
-  display:flex;
-  justify-content:center;
-  gap:15px;
-  margin-top:8px;
-}
-
-.fecha-hora input{
-  padding:10px;
-  border-radius:12px;
-  border:2px solid #C40000;
-  text-align:center;
-  width:140px;
-}
-
-input[type="text"]{
+input{
   width:100%;
   padding:10px;
   border-radius:10px;
@@ -238,13 +222,15 @@ Finalizar Pedido 🛒
 </button>
 
 <div class="panel-final" id="panelFinal">
-<h3>Finalizar Pedido</h3>
+<h3>Finalizar Pedido 🎂</h3>
 
-<div class="label-centro">Elija Fecha</div>
-<div class="label-centro">Elija Hora</div>
-
-<div class="fecha-hora">
+<div class="grupo">
+<p>Fecha de Entrega</p>
 <input type="date" id="fecha">
+</div>
+
+<div class="grupo">
+<p>Hora de Entrega</p>
 <input type="time" id="hora">
 </div>
 
@@ -252,19 +238,19 @@ Finalizar Pedido 🛒
 <input type="text" id="mensaje" placeholder="Mensaje o dedicatoria">
 
 <button class="btn-enviar" onclick="enviarPedido()">
-Enviar Pedido por WhatsApp 🎂
+Enviar Pedido por WhatsApp 🚀
 </button>
 </div>
-
 </div>
 
 <script>
+
 const tortas=[
-{nombre:"Torta Chocolate",precio:"Desde S/60"},
-{nombre:"Torta Tres Leches",precio:"Desde S/55"},
-{nombre:"Torta Red Velvet",precio:"Desde S/65"},
-{nombre:"Torta Oreo",precio:"Desde S/70"},
-{nombre:"Torta Fresa",precio:"Desde S/58"}
+{nombre:"Torta Chocolate",precioCompleta:60,precioTajada:8,img:"imagenes/chocolate.jpg"},
+{nombre:"Torta Tres Leches",precioCompleta:55,precioTajada:7,img:"imagenes/tresleches.jpg"},
+{nombre:"Torta Red Velvet",precioCompleta:65,precioTajada:9,img:"imagenes/redvelvet.jpg"},
+{nombre:"Torta Oreo",precioCompleta:70,precioTajada:10,img:"imagenes/oreo.jpg"},
+{nombre:"Torta Fresa",precioCompleta:58,precioTajada:8,img:"imagenes/fresa.jpg"}
 ];
 
 const lista=document.getElementById("lista");
@@ -275,15 +261,18 @@ lista.innerHTML+=`
 <div class="torta">
 <div class="torta-header">
 <div class="torta-info">
+<img src="${t.img}">
 <div>
 <h3>${t.nombre}</h3>
-<p>${t.precio}</p>
+<p>Torta completa: S/${t.precioCompleta}</p>
+<p>Por tajada: S/${t.precioTajada}</p>
 </div>
 </div>
 <button class="btn-toggle" onclick="toggle(this)">+</button>
 </div>
 
 <div class="opciones">
+
 <div class="grupo">
 <p>Presentación</p>
 <button class="opcion-btn" onclick="seleccionar(event,this)">Torta Completa</button>
@@ -294,6 +283,7 @@ lista.innerHTML+=`
 <button class="opcion-btn" onclick="seleccionar(event,this)">2</button>
 <button class="opcion-btn" onclick="seleccionar(event,this)">4</button>
 <button class="opcion-btn" onclick="seleccionar(event,this)">6</button>
+<button class="opcion-btn" onclick="masTajadas(this)">+ Más</button>
 </div>
 </div>
 
@@ -304,9 +294,25 @@ lista.innerHTML+=`
 <button class="opcion-btn" onclick="seleccionar(event,this)">Chocolate</button>
 </div>
 
+<div class="grupo">
+<p>Cobertura</p>
+<button class="opcion-btn" onclick="seleccionar(event,this)">Chantilly</button>
+<button class="opcion-btn" onclick="seleccionar(event,this)">Fondant</button>
+<button class="opcion-btn" onclick="seleccionar(event,this)">Ganache</button>
+</div>
+
+<div class="grupo">
+<p>Toppings</p>
+<button class="opcion-btn" onclick="seleccionar(event,this)">Fresas</button>
+<button class="opcion-btn" onclick="seleccionar(event,this)">Oreo</button>
+<button class="opcion-btn" onclick="seleccionar(event,this)">Chispas</button>
+<button class="opcion-btn" onclick="seleccionar(event,this)">Nueces</button>
+</div>
+
 <button class="btn-agregar" onclick="agregarAlCarrito('${t.nombre}',this)">
 Agregar al Pedido
 </button>
+
 </div>
 </div>
 `;
@@ -324,10 +330,20 @@ op.style.display=op.style.display==="block"?"none":"block";
 
 function seleccionar(e,btn){
 e.stopPropagation();
-const grupo=btn.parentElement;
+
+const grupo = btn.closest(".grupo");
+const titulo = grupo.querySelector("p").innerText;
+
+if(titulo === "Toppings"){
+// Permitir múltiples
+btn.classList.toggle("activo");
+} else {
+// Solo una selección por grupo
 grupo.querySelectorAll(".opcion-btn").forEach(b=>b.classList.remove("activo"));
 btn.classList.add("activo");
+}
 
+// Mostrar tajadas si es necesario
 if(btn.innerText==="Por Tajadas"){
 grupo.querySelector(".tajadas").style.display="block";
 }
@@ -336,8 +352,61 @@ grupo.querySelector(".tajadas").style.display="none";
 }
 }
 
+function masTajadas(btn){
+let cantidad=prompt("¿Cuántas tajadas deseas?");
+if(cantidad && !isNaN(cantidad)){
+btn.parentElement.querySelectorAll(".opcion-btn").forEach(b=>b.classList.remove("activo"));
+btn.classList.add("activo");
+btn.innerText=cantidad+" Tajadas";
+}
+}
+
 function agregarAlCarrito(nombre,btn){
-carrito.push(nombre);
+
+const tortaDiv = btn.closest(".torta");
+
+let presentacion = "";
+let cantidadTajadas = "";
+let relleno = "";
+let cobertura = "";
+let toppings = [];
+
+// PRESENTACION
+const grupoPresentacion = tortaDiv.querySelectorAll(".grupo")[0];
+grupoPresentacion.querySelectorAll(".opcion-btn.activo").forEach(b=>{
+if(b.innerText === "Torta Completa" || b.innerText === "Por Tajadas"){
+presentacion = b.innerText;
+}
+else{
+cantidadTajadas = b.innerText;
+}
+});
+
+// RELLENO
+const grupoRelleno = tortaDiv.querySelectorAll(".grupo")[1];
+const rellenoActivo = grupoRelleno.querySelector(".opcion-btn.activo");
+if(rellenoActivo) relleno = rellenoActivo.innerText;
+
+// COBERTURA
+const grupoCobertura = tortaDiv.querySelectorAll(".grupo")[2];
+const coberturaActiva = grupoCobertura.querySelector(".opcion-btn.activo");
+if(coberturaActiva) cobertura = coberturaActiva.innerText;
+
+// TOPPINGS
+const grupoToppings = tortaDiv.querySelectorAll(".grupo")[3];
+grupoToppings.querySelectorAll(".opcion-btn.activo").forEach(b=>{
+toppings.push(b.innerText);
+});
+
+carrito.push({
+nombre,
+presentacion,
+cantidadTajadas,
+relleno,
+cobertura,
+toppings
+});
+
 alert(nombre+" agregada al pedido");
 }
 
@@ -346,30 +415,57 @@ if(carrito.length===0){
 alert("Agrega al menos una torta");
 return;
 }
-document.getElementById("panelFinal").style.display="block";
+const panel=document.getElementById("panelFinal");
+panel.style.display="block";
+panel.scrollIntoView({behavior:"smooth"});
 }
-
 function enviarPedido(){
-const fecha=document.getElementById("fecha").value;
-const hora=document.getElementById("hora").value;
-const cliente=document.getElementById("cliente").value;
-const mensaje=document.getElementById("mensaje").value;
 
-if(!fecha||!hora){
-alert("Seleccione fecha y hora");
+if(carrito.length===0){
+alert("No hay productos en el pedido");
 return;
 }
 
-let texto="*PEDIDO HAPPY CAKES* 🎂\n\n";
-texto+="*Tortas:* \n";
-carrito.forEach(t=>texto+="- "+t+"\n");
+const fecha=document.getElementById("fecha").value;
+const hora=document.getElementById("hora").value;
+const cliente=document.getElementById("cliente").value;
+const mensajeExtra=document.getElementById("mensaje").value;
 
-texto+="\n*Fecha:* "+fecha;
-texto+="\n*Hora:* "+hora;
-texto+="\n*Cliente:* "+cliente;
-texto+="\n*Mensaje:* "+mensaje;
+let mensaje="PEDIDO HAPPY CAKES\n\n";
 
-window.location.href="https://wa.me/51999999999?text="+encodeURIComponent(texto);
+mensaje+="Cliente: "+cliente+"\n";
+mensaje+="Fecha: "+fecha+"\n";
+mensaje+="Hora: "+hora+"\n\n";
+
+mensaje+="DETALLE DEL PEDIDO:\n";
+
+carrito.forEach((item,index)=>{
+mensaje+="\n"+(index+1)+". "+item.nombre+"\n";
+
+if(item.presentacion)
+mensaje+="   Presentacion: "+item.presentacion+"\n";
+
+if(item.cantidadTajadas)
+mensaje+="   Cantidad: "+item.cantidadTajadas+"\n";
+
+if(item.relleno)
+mensaje+="   Relleno: "+item.relleno+"\n";
+
+if(item.cobertura)
+mensaje+="   Cobertura: "+item.cobertura+"\n";
+
+if(item.toppings && item.toppings.length>0)
+mensaje+="   Toppings: "+item.toppings.join(", ")+"\n";
+});
+
+if(mensajeExtra){
+mensaje+="\nDedicatoria: "+mensajeExtra;
+}
+
+const numero="51958049586"; // CAMBIA POR TU NUMERO REAL
+const url=`https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
+
+window.open(url,"_blank");
 }
 </script>
 
